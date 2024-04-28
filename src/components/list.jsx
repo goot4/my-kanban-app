@@ -1,14 +1,14 @@
 
-import {rectSortingStrategy, SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import {useDroppable} from "@dnd-kit/core";
+import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import Card from "./Card";
-export default function List({cards}){
+export default function List({list}){
+  const {setNodeRef}=useDroppable({id:list.id});
   return (
-    <SortableContext items={cards} strategy={verticalListSortingStrategy}>
-      <div className={"border-amber-50 border-2 m-2 p-2"}>
-        {cards.map((card)=> (
-          <div key={card.id} className={"border-2 border-sky-400 m-2 p-2"}>
-            <Card cardData={card}></Card>
-          </div>
+    <SortableContext id={list.id} items={list.cards} strategy={verticalListSortingStrategy}>
+      <div ref={setNodeRef} className={"border-amber-50 border-2 m-2 p-2"}>
+        {list.cards.map((card)=> (
+          <Card cardData={card}></Card>
         ))}
       </div>
     </SortableContext>
