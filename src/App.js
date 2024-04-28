@@ -1,10 +1,12 @@
 import './App.css';
 import {DndContext, closestCorners} from "@dnd-kit/core";
+import {arrayMove} from "@dnd-kit/sortable";
 import {useState} from "react";
 
 import { listsData, } from './lib/data'
+import Header from "./components/header";
 import List from "./components/list";
-import {arrayMove} from "@dnd-kit/sortable";
+
 
 function App() {
   const [lists, setLists] = useState(listsData);
@@ -55,7 +57,7 @@ function App() {
     });
   }
   function handleDragEnd(event) {
-    const { active, over, draggingRect } = event;
+    const { active, over } = event;
     const { id } = active;
     const { id: overId } = over;
     const activeContainer = findContainer(id);
@@ -76,24 +78,21 @@ function App() {
 
 
   return (
-    <div className="App">
-      <div className="w-full h-[80vh] bg-gray-600 flex flex-row">
+    <div data-theme="codecademy" className="h-screen">
+      <div className="flex flex-col items-center justify-center max-w-4xl mx-auto">
+        <Header/>
         <DndContext collisionDetection={closestCorners}
                     onDragStart={handleDragStart} onDragOver={handleDragOver}
                     onDragEnd={handleDragEnd}>
-          <div className={"w-[35vw] h-2/3 border-2 border-gray-200"}>
+          <div className="w-full px-4 flex flex-row space-x-4">
             <List list={lists[0]}/>
-          </div>
-          <div className={"w-[35vw] h-2/3 border-2 border-gray-200"}>
             <List list={lists[1]}/>
-          </div>
-          <div className={"w-[35vw] h-2/3 border-2 border-gray-200"}>
             <List list={lists[2]}/>
           </div>
         </DndContext>
       </div>
     </div>
-  );
+  )
 }
 
 export default App;

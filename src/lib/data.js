@@ -1,25 +1,39 @@
-export class CardData {
-  id;
-  content;
-  constructor(id, content) {
-    this.id = id;
-    this.content = content;
-  }
+
+
+const shortTitle = "normal title";
+const longTitle = "start long long long long long title";
+const reallyLongTitle = "start long long long long long long long long long long long title"
+const emptyDescription = "";
+const shortDescription = "description";
+const longDescription = "long long long long long long long long long long long long description";
+
+export const testCardData = {
+  id: `test card 0`,
+  title: shortTitle,
+  description: longDescription,
+  isDone: false,
+}
+const testCardData1= {
+  id: `test card 1`,
+  title: longTitle,
+  description: longDescription,
+  isDone: false,
+}
+const testCardData2= {
+  id: `test card 2`,
+  title: `test card 2`,
+  description: longDescription,
+  isDone: false,
+}
+const testCardData3= {
+  id: `test card 3`,
+  title: `test card 3`,
+  description: longDescription,
+  isDone: false,
 }
 
-export const listsData = [{
-  id: `list-0`,
-  cards: Array(4).fill(0)
-    .map((value, index)=> new CardData(`${index}`, `this is a card ${index}`)),
-  },
-  {
-    id: `list-1`,
-    cards: Array(4).fill(0)
-      .map((value, index)=> new CardData(`${index+10}`, `this is a card ${index+10}`)),
-  },
-  {
-    id: `list-2`,
-    cards: Array(0).fill(0)
-      .map((value, index)=> new CardData(`${index+10}`, `this is a card ${index+10}`)),
-  }
+export const listsData = [
+  { id: 'todo', title: 'Todo', cards: [testCardData, testCardData1, testCardData2, testCardData3]},
+  { id: 'doing', title: 'Doing', cards: []},
+  { id: 'done', title: 'Done', cards: []}
 ]

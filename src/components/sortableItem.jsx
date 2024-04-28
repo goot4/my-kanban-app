@@ -9,6 +9,7 @@ export function SortableItem(props) {
     setNodeRef,
     transform,
     transition,
+    isDragging
   } = useSortable({
     id: props.id
   });
