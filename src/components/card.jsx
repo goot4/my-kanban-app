@@ -16,7 +16,7 @@ export default function Card({cardData}) {
   }
   return (
     <SortableItem id={cardData.id}>
-      <div className="h-14 border-base-100 border-x border-y mx-2 flex flex-row items-stretch cursor-pointer transition-all hover:translate-x-[2px] hover:translate-y-[-2px] hover:shadow-[-4px_4px_0px] hover:shadow-base-100"
+      <div className="h-14 border-base-100 bg-primary border-x border-y mx-2 flex flex-row items-stretch cursor-pointer transition-all hover:translate-x-[2px] hover:translate-y-[-2px] hover:shadow-[-4px_4px_0px] hover:shadow-base-100"
            onPointerEnter={pointerEnterHandler} onPointerLeave={pointerLeaveHandler}>
         <div className="flex flex-row items-center">
           <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -84,7 +84,7 @@ function App() {
         <DndContext collisionDetection={closestCorners}
                     onDragStart={handleDragStart} onDragOver={handleDragOver}
                     onDragEnd={handleDragEnd}>
-          <div className="w-full px-4 flex flex-row space-x-4">
+          <div className="w-full px-4 flex flex-row justify-center space-x-[2%]">
             <List list={lists[0]}/>
             <List list={lists[1]}/>
             <List list={lists[2]}/>
