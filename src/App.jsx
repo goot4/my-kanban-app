@@ -16,31 +16,31 @@ function App() {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [oldTitle, setOldTitle] = useState('');
   const [oldDescription, setOldDescription] = useState('');
+  const [isDeletable, setIsDeletable] = useState(false);
   const [editorCallback, setEditorCallback] =useState();
 
   let listsData = JSON.parse(localStorage.getItem("lists"));
-  console.log(listsData);
   if(listsData === null) {
     listsData = initialListsData;
   }
   console.log(listsData);
   const [lists, setLists] = useState(listsData);
-
   const [activeId, setActiveId] = useState();
 
   useEffect(() => {
     localStorage.setItem('lists', JSON.stringify(lists));
   }, );
 
-  function openEditor(open, title='', description='', callback=null) {
+  function openEditor(open, title='', description='', isDeletable=false, callback=null) {
     setIsEditorOpen(open);
     setOldTitle(title);
     setOldDescription(description);
+    setIsDeletable(isDeletable);
     // this ()=> is IMPORTANT to set a callback as state.
     setEditorCallback(()=>callback);
   }
   function changeProjectInfoHandler(){
-    openEditor(true, projectTitle, projectDescription,
+    openEditor(true, projectTitle, projectDescription, false,
       (isApplied, title='', description='')=>{
         openEditor(false);
         if(!isApplied) return;
@@ -50,7 +50,7 @@ function App() {
     );
   }
   function addCardHandler(list){
-    openEditor(true, '','',
+    openEditor(true, '','', false,
       (isApplied, title='', description='')=>{
         openEditor(false);
         if(!isApplied) return;
@@ -62,10 +62,19 @@ function App() {
     );
   }
   function changeCardInfoHandler(card){
-    openEditor(true, card.title, card.description,
-      (isApplied, title='', description='')=>{
+    openEditor(true, card.title, card.description, true,
+      (isApplied, title='', description='', deleted=false)=>{
         openEditor(false);
         if(!isApplied) return;
+        if(deleted){
+          setLists(pre => {
+            pre.forEach(list => {
+              list.cards = list.cards.filter(listCard=> listCard.id !== card.id);
+            });
+            return pre;
+          })
+          return;
+        }
         setLists(pre =>{
           card.title = title;
           card.description = description;
@@ -78,7 +87,9 @@ function App() {
   return (
     <div data-theme="codecademy" className="h-screen">
       <div className="flex flex-col items-center justify-center max-w-4xl mx-auto">
-        <EditorOvercast isOpen={isEditorOpen} oldTitle={oldTitle} oldDescription={oldDescription} callback={editorCallback}/>
+        <EditorOvercast isOpen={isEditorOpen} oldTitle={oldTitle}
+                        oldDescription={oldDescription} isDeletable={isDeletable}
+                        callback={editorCallback}/>
         <Header title={projectTitle} description={projectDescription} changeProjectInfo={changeProjectInfoHandler} />
         <DndContext collisionDetection={closestCorners}
                     onDragStart={handleDragStart} onDragOver={handleDragOver}
