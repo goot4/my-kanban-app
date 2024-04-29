@@ -1,16 +1,61 @@
 import './App.css';
 import {DndContext, closestCorners} from "@dnd-kit/core";
 import {arrayMove} from "@dnd-kit/sortable";
-import {useState} from "react";
+import {useRef, useState} from "react";
 
 import { listsData, } from './lib/data'
 import Header from "./components/header";
 import List from "./components/list";
+import EditorOvercast from "./components/editorOvercast";
 
 
 function App() {
+  const [projectTitle, setProjectTitle] = useState("一个非常困难的任务!");
+  const [projectDescription, setProjectDescription] = useState("让我们把他分解, 一步一步地完成.😃");
+  // Editor data
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [oldTitle, setOldTitle] = useState('');
+  const [oldDescription, setOldDescription] = useState('');
+  const [editorCallback, setEditorCallback] =useState();
+
   const [lists, setLists] = useState(listsData);
   const [activeId, setActiveId] = useState();
+
+  function openEditor(open, title='', description='', callback=null) {
+    setIsEditorOpen(open);
+    setOldTitle(title);
+    setOldDescription(description);
+    // this ()=> is IMPORTANT to set a callback as state.
+    setEditorCallback(()=>callback);
+  }
+  function changeProjectInfoHandler(){
+    openEditor(true, projectTitle, projectDescription,
+      (isApplied, title='', description='')=>{
+        openEditor(false);
+        if(!isApplied) return;
+        setProjectTitle(title);
+        setProjectDescription(description);
+      }
+    );
+  }
+
+  return (
+    <div data-theme="codecademy" className="h-screen">
+      <div className="flex flex-col items-center justify-center max-w-4xl mx-auto">
+        <EditorOvercast isOpen={isEditorOpen} oldTitle={oldTitle} oldDescription={oldDescription} callback={editorCallback}/>
+        <Header title={projectTitle} description={projectDescription} changeProjectInfo={changeProjectInfoHandler} />
+        <DndContext collisionDetection={closestCorners}
+                    onDragStart={handleDragStart} onDragOver={handleDragOver}
+                    onDragEnd={handleDragEnd}>
+          <div className="w-full px-4 flex flex-row justify-center space-x-[2%]">
+            <List list={lists[0]}/>
+            <List list={lists[1]}/>
+            <List list={lists[2]}/>
+          </div>
+        </DndContext>
+      </div>
+    </div>
+  )
 
   // find the list which the id belongs to, return the list.
   function findContainer(id){
@@ -75,24 +120,6 @@ function App() {
     }
     setActiveId(null);
   }
-
-
-  return (
-    <div data-theme="codecademy" className="h-screen">
-      <div className="flex flex-col items-center justify-center max-w-4xl mx-auto">
-        <Header/>
-        <DndContext collisionDetection={closestCorners}
-                    onDragStart={handleDragStart} onDragOver={handleDragOver}
-                    onDragEnd={handleDragEnd}>
-          <div className="w-full px-4 flex flex-row justify-center space-x-[2%]">
-            <List list={lists[0]}/>
-            <List list={lists[1]}/>
-            <List list={lists[2]}/>
-          </div>
-        </DndContext>
-      </div>
-    </div>
-  )
 }
 
 export default App;
