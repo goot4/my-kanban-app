@@ -34,7 +34,7 @@ export default function EditorOvercast({isOpen, oldTitle, oldDescription, callba
     setDescription(oldDescription);
   }, [isOpen]);
   return (
-    <div ref={bgEleRef} onClick={cancelClickHandler} className={clsx("absolute top-0 left-0 size-full [background-color:rgba(25,25,25,0.7)] flex flex-row items-center",
+    <div ref={bgEleRef} onClick={cancelClickHandler} className={clsx("absolute top-0 left-0 z-10 size-full [background-color:rgba(25,25,25,0.7)] flex flex-row items-center",
       { "hidden": !isOpen })}>
       <div className={"w-96 h-96 px-8 py-8 bg-primary m-auto"}>
         <button onClick={xClickHandler} className={"btn btn-square btn-outline border-0 bg-primary h-8 min-h-8 w-8 text-base-100 float-end -mr-6 -mt-6"}>

@@ -29,7 +29,7 @@ export default function Card({cardData}) {
         </div>
         <div className="grow flex flex-col overflow-hidden">
           <p className="my-auto text-base-100 text-lg font-bold leading-snug">{cardData.title}</p>
-          <p className={clsx("text-base-100 truncate",{ "hidden": cardData.description===''})}>{cardData.description}</p>
+          <p className={clsx("text-base-100 text-sm truncate",{ "hidden": cardData.description===''})}>{cardData.description}</p>
         </div>
         <div className={clsx("flex flex-row items-center ml-2",{"invisible": pointerIn===false})}>
           <PencilSquareIcon className="size-6 text-base-100"/>

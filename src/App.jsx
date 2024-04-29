@@ -38,6 +38,19 @@ function App() {
       }
     );
   }
+  function changeCardInfoHandler(card){
+    openEditor(true, card.title, card.description,
+      (isApplied, title='', description='')=>{
+        openEditor(false);
+        if(!isApplied) return;
+        setLists(pre =>{
+          card.title = title;
+          card.description = description;
+          return pre;
+        })
+      }
+    );
+  }
 
   return (
     <div data-theme="codecademy" className="h-screen">
@@ -66,7 +79,7 @@ function App() {
   }
   function handleDragStart(event){
     const id = event.active.id;
-    console.log(id);
+    // console.log(id);
     setActiveId(id);
   }
   function handleDragOver(event) {
@@ -102,13 +115,22 @@ function App() {
     });
   }
   function handleDragEnd(event) {
-    const { active, over } = event;
+    const { active, over, delta } = event;
     const { id } = active;
     const { id: overId } = over;
     const activeContainer = findContainer(id);
     const overContainer = findContainer(overId);
+
     // Container not in lists or moving in the DIFFERENT container
     if(!activeContainer||!overContainer|| activeContainer!==overContainer) return;
+
+    console.log(delta);
+    if(delta.x===0 && delta.y===0){
+      console.log("this is a click");
+      changeCardInfoHandler(activeContainer.cards.find(card=>card.id === active.id));
+      return;
+    }
+
     if(active.id !== over.id){
       setLists((lists)=>{
         const cards = overContainer.cards;
