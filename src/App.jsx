@@ -1,12 +1,14 @@
 import './App.css';
-import {DndContext, closestCorners} from "@dnd-kit/core";
+import {DndContext, closestCorners, DragOverlay} from "@dnd-kit/core";
 import {arrayMove} from "@dnd-kit/sortable";
 import {useEffect, useRef, useState} from "react";
 
 import { initialListsData, CardData } from './lib/data'
+import { defaultAnnouncements} from "./lib/dndAnnouncements";
 import Header from "./components/header";
 import List from "./components/list";
 import EditorOvercast from "./components/editorOvercast";
+import Card from "./components/card";
 
 
 function App() {
@@ -23,9 +25,10 @@ function App() {
   if(listsData === null) {
     listsData = initialListsData;
   }
-  console.log(listsData);
+  // console.log(listsData);
   const [lists, setLists] = useState(listsData);
-  const [activeId, setActiveId] = useState();
+  const [activeId, setActiveId] = useState(null);
+  const nuanceTimer = 100;
 
   useEffect(() => {
     localStorage.setItem('lists', JSON.stringify(lists));
@@ -91,13 +94,14 @@ function App() {
                         oldDescription={oldDescription} isDeletable={isDeletable}
                         callback={editorCallback}/>
         <Header title={projectTitle} description={projectDescription} changeProjectInfo={changeProjectInfoHandler} />
-        <DndContext collisionDetection={closestCorners}
+        <DndContext collisionDetection={closestCorners} accessibility={{announcements:defaultAnnouncements}}
                     onDragStart={handleDragStart} onDragOver={handleDragOver}
                     onDragEnd={handleDragEnd}>
           <div className="w-full px-4 flex flex-row justify-center space-x-[2%]">
             <List list={lists[0]} addCardHandler={addCardHandler}/>
             <List list={lists[1]} addCardHandler={addCardHandler}/>
             <List list={lists[2]} addCardHandler={addCardHandler}/>
+            <DragOverlay>{activeId? <Card cardData={findCard(activeId)}/>:null}</DragOverlay>
           </div>
         </DndContext>
       </div>
@@ -111,10 +115,21 @@ function App() {
     ));
     return res;
   }
+  function findCard(id){
+    let res;
+    lists.forEach(list=> {
+      const card =  list.cards.find(card=>card.id === id);
+      if(card !== undefined){
+        res = card;
+      }
+    })
+    return res;
+  }
   function handleDragStart(event){
     const id = event.active.id;
     // console.log(id);
-    setActiveId(id);
+    setTimeout(()=>setActiveId(id),nuanceTimer);
+    ;
   }
   function handleDragOver(event) {
     const { active, over, draggingRect } = event;
@@ -123,7 +138,7 @@ function App() {
     const activeContainer = findContainer(id);
     const overContainer = findContainer(overId);
 
-    console.log({ id, overId, activeContainer, overContainer });
+    // console.log({ id, overId, activeContainerId, overContainerId });
 
     // Container not in lists or moving in the same container
     if(!activeContainer||!overContainer|| activeContainer===overContainer) return;
@@ -132,7 +147,7 @@ function App() {
       const activeCards = activeContainer.cards;
       const overCards = overContainer.cards;
       const activeIndex = activeCards.findIndex(card => card.id === id);
-      const overIndex = overCards.findIndex(card => card.id === id); // overIndex may not exist.
+      let overIndex = overCards.findIndex(card => card.id === id); // overIndex may not exist.
       let newIndex;
       if(pre.find(list=> list.id === overId)){
         // We're at the root droppable of a container
@@ -156,15 +171,21 @@ function App() {
     const overContainer = findContainer(overId);
 
     // Container not in lists or moving in the DIFFERENT container
-    if(!activeContainer||!overContainer|| activeContainer!==overContainer) return;
+    if(!activeContainer||!overContainer|| activeContainer!==overContainer) {
+      setTimeout(()=> setActiveId(null), nuanceTimer);
+      return;
+    };
 
-    console.log(delta);
-    if(delta.x===0 && delta.y===0){
+    // console.log(delta);
+    if(activeId === null){
       console.log("this is a click");
       changeCardInfoHandler(activeContainer.cards.find(card=>card.id === active.id));
+      setTimeout(()=> setActiveId(null), nuanceTimer);
       return;
     }
 
+    console.log(activeId);
+    findCard(activeId).isDone = activeContainer.id === 'done';
     if(active.id !== over.id){
       setLists((lists)=>{
         const cards = overContainer.cards;
@@ -174,7 +195,7 @@ function App() {
         return lists;
       });
     }
-    setActiveId(null);
+    setTimeout(()=> setActiveId(null), nuanceTimer);
   }
 }
 
