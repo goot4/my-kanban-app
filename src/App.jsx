@@ -1,9 +1,9 @@
 import './App.css';
 import {DndContext, closestCorners} from "@dnd-kit/core";
 import {arrayMove} from "@dnd-kit/sortable";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
-import { listsData, } from './lib/data'
+import { initialListsData, CardData } from './lib/data'
 import Header from "./components/header";
 import List from "./components/list";
 import EditorOvercast from "./components/editorOvercast";
@@ -18,8 +18,19 @@ function App() {
   const [oldDescription, setOldDescription] = useState('');
   const [editorCallback, setEditorCallback] =useState();
 
+  let listsData = JSON.parse(localStorage.getItem("lists"));
+  console.log(listsData);
+  if(listsData === null) {
+    listsData = initialListsData;
+  }
+  console.log(listsData);
   const [lists, setLists] = useState(listsData);
+
   const [activeId, setActiveId] = useState();
+
+  useEffect(() => {
+    localStorage.setItem('lists', JSON.stringify(lists));
+  }, );
 
   function openEditor(open, title='', description='', callback=null) {
     setIsEditorOpen(open);
@@ -35,6 +46,18 @@ function App() {
         if(!isApplied) return;
         setProjectTitle(title);
         setProjectDescription(description);
+      }
+    );
+  }
+  function addCardHandler(list){
+    openEditor(true, '','',
+      (isApplied, title='', description='')=>{
+        openEditor(false);
+        if(!isApplied) return;
+        setLists(pre => {
+          list.cards.push(new CardData(title, description, list.id==='done'));
+          return pre;
+        })
       }
     );
   }
@@ -61,9 +84,9 @@ function App() {
                     onDragStart={handleDragStart} onDragOver={handleDragOver}
                     onDragEnd={handleDragEnd}>
           <div className="w-full px-4 flex flex-row justify-center space-x-[2%]">
-            <List list={lists[0]}/>
-            <List list={lists[1]}/>
-            <List list={lists[2]}/>
+            <List list={lists[0]} addCardHandler={addCardHandler}/>
+            <List list={lists[1]} addCardHandler={addCardHandler}/>
+            <List list={lists[2]} addCardHandler={addCardHandler}/>
           </div>
         </DndContext>
       </div>

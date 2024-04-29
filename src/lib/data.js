@@ -1,3 +1,15 @@
+export class CardData {
+  id;
+  title;
+  description;
+  isDone;
+  constructor(title, description, isDone=false) {
+    this.id = crypto.randomUUID();
+    this.title = title;
+    this.description = description;
+    this.isDone = isDone;
+  }
+}
 
 const defaultCardData = {
   id: crypto.randomUUID(),
@@ -6,7 +18,7 @@ const defaultCardData = {
   isDone: false,
 }
 
-export const listsData = [
+export const initialListsData = [
   { id: 'todo', title: 'Todo', cards: [defaultCardData]},
   { id: 'doing', title: 'Doing', cards: []},
   { id: 'done', title: 'Done', cards: []}

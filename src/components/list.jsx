@@ -3,7 +3,7 @@ import {useDroppable} from "@dnd-kit/core";
 import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
 
 import Card from "./card";
-export default function List({list}){
+export default function List({list, addCardHandler}){
   const {setNodeRef}=useDroppable({id:list.id});
   return (
     <SortableContext id={list.id} items={list.cards} strategy={verticalListSortingStrategy}>
@@ -12,7 +12,13 @@ export default function List({list}){
         {list.cards.map((card) => (
           <Card key={card.id} cardData={card}></Card>
         ))}
+        <button onClick={clickHandler} className={"w-fit m-auto text-base-100"}>+ 添加卡片</button>
       </div>
     </SortableContext>
   )
+
+  function clickHandler(){
+    console.log(list);
+    addCardHandler(list);
+  }
 }
